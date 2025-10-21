@@ -1054,6 +1054,8 @@ MonoBehaviour:
   amountOfSlots: 5
   heightMultiplayer: 200
   textPrefab: {fileID: 631354516}
+  bools:
+    bools: 
 --- !u!4 &2108734784
 Transform:
   m_ObjectHideFlags: 0

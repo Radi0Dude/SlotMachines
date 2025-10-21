@@ -18,8 +18,8 @@ public class GridHolder : MonoBehaviour
 	GameObject textPrefab;
 
 	GameObject canvasObj;
-
-
+	[SerializeField]
+	boolHolder bools;
 	private void Awake()
 	{
 		canvasObj = FindAnyObjectByType<Canvas>().gameObject;
@@ -75,4 +75,9 @@ class Cell
 	public TMP_Text cellText;
 
 	public int height;
+}
+[Serializable]
+public class boolHolder
+{
+	public bool[] bools;
 }
