@@ -8,6 +8,7 @@ public class BoolGridEditor : EditorWindow
 	private int cellSize = 25;
 	private string drawingName = "";
 	private string savePath = "Assets/Scripts/ScriptableObjects";
+	private string score = "0";
 
 	[MenuItem("Window/Bool Grid Editor")]
 	public static void OpenWindow()
@@ -20,6 +21,8 @@ public class BoolGridEditor : EditorWindow
 		EditorGUILayout.Space();
 		drawingName = EditorGUILayout.TextField("Grid Name:", drawingName);
 		EditorGUILayout.Space();
+
+		score = EditorGUILayout.TextField("Score:", score);
 
 		if (boolGrid == null)
 		{
@@ -58,17 +61,35 @@ public class BoolGridEditor : EditorWindow
 		boolGrid = CreateInstance<BoolGrid>();
 		boolGrid.width = 5;
 		boolGrid.height = 5;
+		drawingName = "";
+		score = "0";
 		boolGrid.Initialize();
 	}
 
 	private void SaveAssetAsNew()
 	{
+
 		if(!Directory.Exists(savePath))
 			Directory.CreateDirectory(savePath);
 		else
 			Debug.LogWarning("Directory already exists.");
 
 		BoolGrid newgrid = CreateInstance<BoolGrid>();
+		if(int.TryParse(score, out int scoreValue))
+		{
+			newgrid.score = scoreValue;
+			if(scoreValue == 0)
+			{
+				Debug.LogError("Score cannot be zero. Please enter a valid score.");
+				return;
+			}
+		}
+		else
+		{
+			Debug.LogError("Invalid score input. Please enter a valid integer.");
+			return;
+		}
+		
 		newgrid.width = boolGrid.width;
 		newgrid.height = boolGrid.height;
 		newgrid.cells = (bool[])boolGrid.cells.Clone();
@@ -80,6 +101,7 @@ public class BoolGridEditor : EditorWindow
 
 			return;
 		}
+		
 		AssetDatabase.CreateAsset(newgrid, assetPath);
 		AssetDatabase.SaveAssets();
 		Debug.Log($"BoolGrid saved as new asset at: {assetPath}");

@@ -6,6 +6,7 @@ public class BoolGrid : ScriptableObject
 	public int height = 5;
 	public int width = 5;
 	public bool[] cells;
+	public int score;
 
 	public void Initialize()
 	{
