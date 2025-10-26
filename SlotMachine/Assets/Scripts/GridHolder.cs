@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using TMPro;
 using System.Runtime.ExceptionServices;
+using System.Linq;
 
 public class GridHolder : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class GridHolder : MonoBehaviour
 	GameObject canvasObj;
 	[SerializeField]
 	boolHolder bools;
+	[SerializeField]
+	List<BoolGrid> boolGrids = new List<BoolGrid>();
+
 	private void Awake()
 	{
 		canvasObj = FindAnyObjectByType<Canvas>().gameObject;
@@ -33,14 +37,16 @@ public class GridHolder : MonoBehaviour
 			for (int j = 0; j < amountOfSlots; j++)
 			{
 				grids[i].cells.Add(new Cell());
-				grids[i].cells[j].num = UnityEngine.Random.Range(0, 9);
-				grids[i].cells[j].height = i * heightMultiplayer;
-				GameObject text = Instantiate(textPrefab, new Vector3(j * heightMultiplayer + 100, grids[i].cells[j].height + 100), Quaternion.identity);
+				//grids[i].cells[j].num = UnityEngine.Random.Range(0, 9);
+				grids[i].cells[j].num = 1;
+				grids[i].cells[j].height = amountOfSlots - i * heightMultiplayer;
+				GameObject text = Instantiate(textPrefab, new Vector3(j * heightMultiplayer + 100, grids[i].cells[j].height + 900), Quaternion.identity);
 				text.transform.SetParent(canvasObj.transform);
 				grids[i].cells[j].cellText = text.GetComponent<TMP_Text>();
 				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
 			}
 		}
+		CheckForWin();
 	}
 	public void MasterSlotButton()
 	{
@@ -53,31 +59,69 @@ public class GridHolder : MonoBehaviour
 			}
 		}
 		CheckForWin();
-	} 
+	}
 
 	private void CheckForWin()
 	{
-		
+		List<int> winningNums = grids.SelectMany(g => g.cells).Select(c => c.num).ToList();
+		Debug.Log("Winning Numbers: " + string.Join(", ", winningNums));
+		foreach (var grid in boolGrids)
+		{
+			List<int> nums = new List<int>();
+			int previousCount = -1;
+
+			for (int i = 0; i < grid.cells.Length; i++)
+			{
+
+				if (grid.cells[i] == true)
+				{
+					nums.Add(i);
+				}
+			}
+			for(int i = 0; i < nums.Count; i++)
+			{
+				if(i == 0)
+				{
+					previousCount = winningNums[nums[i]];
+					Debug.Log("Starting with: " + previousCount);
+					continue;
+				}
+				int current = winningNums[nums[i]];
+				if (current != previousCount)
+				{
+					Debug.Log("You lost");
+					return;
+				}
+
+
+				previousCount = current;
+			}
+			Debug.Log("You won!");
+			Win();
+		}
+
 	}
-
+	private void Win()
+	{
+		//Check for the biggest win is more important not every win
+	}
 }
 
+	[Serializable]
+	class Grid
+	{
+		public List<Cell> cells = new List<Cell>();
+	}
+	[Serializable]
+	class Cell
+	{
+		public int num;
+		public TMP_Text cellText;
 
-[Serializable]
-class Grid
-{
-	public List<Cell> cells = new List<Cell>();
-}
-[Serializable]
-class Cell
-{
-	public int num;
-	public TMP_Text cellText;
-
-	public int height;
-}
-[Serializable]
-public class boolHolder
-{
-	public bool[] bools;
-}
+		public int height;
+	}
+	[Serializable]
+	public class boolHolder
+	{
+		public bool[] bools;
+	}

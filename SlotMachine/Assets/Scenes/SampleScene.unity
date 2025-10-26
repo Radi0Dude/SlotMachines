@@ -1056,6 +1056,8 @@ MonoBehaviour:
   textPrefab: {fileID: 631354516}
   bools:
     bools: 
+  boolGrids:
+  - {fileID: 11400000, guid: 3243446d643232d40a2a48b33742a389, type: 2}
 --- !u!4 &2108734784
 Transform:
   m_ObjectHideFlags: 0
