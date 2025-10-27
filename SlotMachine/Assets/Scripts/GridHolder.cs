@@ -24,9 +24,13 @@ public class GridHolder : MonoBehaviour
 	[SerializeField]
 	List<BoolGrid> boolGrids = new List<BoolGrid>();
 
+	[SerializeField]
+	PlayerData playerData;
+
 	private void Awake()
 	{
 		canvasObj = FindAnyObjectByType<Canvas>().gameObject;
+		playerData = FindAnyObjectByType<PlayerData>();
 		FirtsSlot();
 	}
 	void FirtsSlot()
@@ -64,6 +68,7 @@ public class GridHolder : MonoBehaviour
 	private void CheckForWin()
 	{
 		List<int> winningNums = grids.SelectMany(g => g.cells).Select(c => c.num).ToList();
+		BiggestWin biggestWin = new BiggestWin();
 		Debug.Log("Winning Numbers: " + string.Join(", ", winningNums));
 		foreach (var grid in boolGrids)
 		{
@@ -97,12 +102,18 @@ public class GridHolder : MonoBehaviour
 				previousCount = current;
 			}
 			Debug.Log("You won!");
-			Win();
+			if(grid.score > biggestWin.score)
+			{
+				biggestWin.score = grid.score;
+				biggestWin.winName = grid.name;
+			}
 		}
+		Win(biggestWin);
 
 	}
-	private void Win()
+	private void Win(BiggestWin bigWin)
 	{
+		playerData.AddCredits(bigWin.score);
 		//Check for the biggest win is more important not every win
 	}
 }
@@ -111,6 +122,11 @@ public class GridHolder : MonoBehaviour
 	class Grid
 	{
 		public List<Cell> cells = new List<Cell>();
+	}
+	struct BiggestWin
+	{
+		public string winName;
+		public int score;
 	}
 	[Serializable]
 	class Cell
