@@ -10,6 +10,13 @@ public class PlayerData : MonoBehaviour
 	[SerializeField]
 	private TMP_Text creditsText;
 
+	GridHolder gridHolder;
+	private void Awake()
+	{
+		gridHolder = FindAnyObjectByType<GridHolder>();
+		UpdateCredits();
+	}
+
 	public void AddCredits(int amount)
 	{
 		credits += amount;
@@ -20,6 +27,13 @@ public class PlayerData : MonoBehaviour
 	{
 		credits -= amount;
 		UpdateCredits();
+	}
+	public void ClickSlot(int prize)
+	{
+		if(gridHolder.isRunning)
+			return;
+		gridHolder.MasterSlotButton();
+		RemoveCredits(prize);
 	}
 
 	public void UpdateCredits()

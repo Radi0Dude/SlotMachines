@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using System;
-using UnityEngine;
-using TMPro;
-using System.Runtime.ExceptionServices;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine;
 
 public class GridHolder : MonoBehaviour
 {
@@ -27,11 +27,20 @@ public class GridHolder : MonoBehaviour
 	[SerializeField]
 	PlayerData playerData;
 
+	[SerializeField]
+	float slotTime;
+
+	public bool isRunning = true;
+
 	private void Awake()
 	{
 		canvasObj = FindAnyObjectByType<Canvas>().gameObject;
 		playerData = FindAnyObjectByType<PlayerData>();
+	}
+	private void Start()
+	{
 		FirtsSlot();
+
 	}
 	void FirtsSlot()
 	{
@@ -50,10 +59,15 @@ public class GridHolder : MonoBehaviour
 				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
 			}
 		}
-		CheckForWin();
+		StartCoroutine(SpinLenght());
+		CheckForBigWin();
 	}
 	public void MasterSlotButton()
 	{
+		if (isRunning)
+		{
+			return;
+		}
 		for (int i = 0; i < amountOfSlots; i++)
 		{
 			for (int j = 0; j < amountOfSlots; j++)
@@ -62,10 +76,11 @@ public class GridHolder : MonoBehaviour
 				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
 			}
 		}
-		CheckForWin();
+		StartCoroutine(SpinLenght());
+		CheckForBigWin();
 	}
 
-	private void CheckForWin()
+	private void CheckForBigWin()
 	{
 		List<int> winningNums = grids.SelectMany(g => g.cells).Select(c => c.num).ToList();
 		BiggestWin biggestWin = new BiggestWin();
@@ -83,9 +98,9 @@ public class GridHolder : MonoBehaviour
 					nums.Add(i);
 				}
 			}
-			for(int i = 0; i < nums.Count; i++)
+			for (int i = 0; i < nums.Count; i++)
 			{
-				if(i == 0)
+				if (i == 0)
 				{
 					previousCount = winningNums[nums[i]];
 					Debug.Log("Starting with: " + previousCount);
@@ -95,6 +110,8 @@ public class GridHolder : MonoBehaviour
 				if (current != previousCount)
 				{
 					Debug.Log("You lost");
+
+
 					return;
 				}
 
@@ -102,42 +119,81 @@ public class GridHolder : MonoBehaviour
 				previousCount = current;
 			}
 			Debug.Log("You won!");
-			if(grid.score > biggestWin.score)
+			if (grid.score > biggestWin.score)
 			{
 				biggestWin.score = grid.score;
 				biggestWin.winName = grid.name;
 			}
-		}
-		Win(biggestWin);
 
+
+		}
+
+		StartCoroutine(Win(biggestWin));
 	}
-	private void Win(BiggestWin bigWin)
+
+	IEnumerator SpinLenght()
 	{
+		float t = 0;
+		isRunning = true;
+		while (t < slotTime)
+		{
+
+			t += Time.deltaTime;
+			for (int i = 0; i < amountOfSlots; i++)
+			{
+				for (int j = 0; j < amountOfSlots; j++)
+				{
+					grids[i].cells[j].cellText.text = UnityEngine.Random.Range(0, 9).ToString();
+				}
+			}
+			yield return new WaitForEndOfFrame();
+		}
+		for (int i = 0; i < amountOfSlots; i++)
+		{
+			for (int j = 0; j < amountOfSlots; j++)
+			{
+				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
+			}
+		}
+		isRunning = false;
+	}
+
+	private IEnumerator Win(BiggestWin bigWin)
+	{
+		yield return new WaitForSeconds(0.1f);
+		Debug.Log(isRunning + " waiting for the slot to end");
+		while (isRunning)
+		{
+			yield return new WaitForEndOfFrame();
+		}
+		Debug.Log("You won a " + bigWin.winName + " for " + bigWin.score + " credits!");
+		yield return new WaitForSeconds(0.5f);
+
 		playerData.AddCredits(bigWin.score);
 		//Check for the biggest win is more important not every win
 	}
 }
 
-	[Serializable]
-	class Grid
-	{
-		public List<Cell> cells = new List<Cell>();
-	}
-	struct BiggestWin
-	{
-		public string winName;
-		public int score;
-	}
-	[Serializable]
-	class Cell
-	{
-		public int num;
-		public TMP_Text cellText;
+[Serializable]
+class Grid
+{
+	public List<Cell> cells = new List<Cell>();
+}
+struct BiggestWin
+{
+	public string winName;
+	public int score;
+}
+[Serializable]
+class Cell
+{
+	public int num;
+	public TMP_Text cellText;
 
-		public int height;
-	}
-	[Serializable]
-	public class boolHolder
-	{
-		public bool[] bools;
-	}
+	public int height;
+}
+[Serializable]
+public class boolHolder
+{
+	public bool[] bools;
+}

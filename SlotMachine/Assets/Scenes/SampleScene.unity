@@ -492,7 +492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   credits: 10000
-  creditsText: {fileID: 0}
+  creditsText: {fileID: 1892487987}
 --- !u!4 &626920101
 Transform:
   m_ObjectHideFlags: 0
@@ -795,7 +795,7 @@ GameObject:
   - component: {fileID: 804989691}
   - component: {fileID: 804989690}
   m_Layer: 5
-  m_Name: Button
+  m_Name: MasterSpinAll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -865,14 +865,14 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2108734783}
-        m_TargetAssemblyTypeName: GridHolder, Assembly-CSharp
-        m_MethodName: MasterSlotButton
-        m_Mode: 1
+      - m_Target: {fileID: 626920100}
+        m_TargetAssemblyTypeName: PlayerData, Assembly-CSharp
+        m_MethodName: ClickSlot
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 100
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1240,9 +1240,23 @@ MonoBehaviour:
   bools:
     bools: 
   boolGrids:
-  - {fileID: 11400000, guid: 3243446d643232d40a2a48b33742a389, type: 2}
   - {fileID: 11400000, guid: 47c03b8fdf6de4b40835ea7d2542192b, type: 2}
+  - {fileID: 11400000, guid: b8c8889f7916b1148b742440fb45ef72, type: 2}
+  - {fileID: 11400000, guid: 6a61be2e9d224e94e87b7669f40fd49b, type: 2}
+  - {fileID: 11400000, guid: 38ddda12562c8d34a972d23632d021d8, type: 2}
+  - {fileID: 11400000, guid: 67de5cff0b534884f92b736c3dda0e6d, type: 2}
+  - {fileID: 11400000, guid: 96bc1eede27cb2744a80cb9cd1a17703, type: 2}
+  - {fileID: 11400000, guid: 664b9c50823faf747bf8a724f3b625bd, type: 2}
+  - {fileID: 11400000, guid: 8e0e2fa6316dbec4a98d7b68b9dd388f, type: 2}
+  - {fileID: 11400000, guid: 6d5708787384f0641acf8f91511affab, type: 2}
+  - {fileID: 11400000, guid: 3243446d643232d40a2a48b33742a389, type: 2}
+  - {fileID: 11400000, guid: e53b829f769f7e84a8ec9870d3ba04c8, type: 2}
+  - {fileID: 11400000, guid: 9227b2caefc73064ca000ddf041d7d0d, type: 2}
+  - {fileID: 11400000, guid: 10c1edbbf2c61144aa792d3093cb2cb1, type: 2}
+  - {fileID: 11400000, guid: a88289c8c2ae7ce4ab2885f188aa3a2c, type: 2}
   playerData: {fileID: 0}
+  slotTime: 2
+  isRunning: 1
 --- !u!4 &2108734784
 Transform:
   m_ObjectHideFlags: 0
