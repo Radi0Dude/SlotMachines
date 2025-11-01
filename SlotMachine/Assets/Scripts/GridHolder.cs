@@ -5,19 +5,22 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
+//Manages the grids and slot machine logic
 public class GridHolder : MonoBehaviour
 {
+
+	
 	[SerializeField] private List<Grid> grids = new List<Grid>();
 
 	[SerializeField]
 	int amountOfSlots;
 
 	[SerializeField]
-	int heightMultiplayer;
+	int heightMultiplier;
 
 	[SerializeField]
 	GameObject textPrefab;
-
+	[SerializeField]
 	GameObject canvasObj;
 	[SerializeField]
 	boolHolder bools;
@@ -34,15 +37,19 @@ public class GridHolder : MonoBehaviour
 
 	private void Awake()
 	{
-		canvasObj = FindAnyObjectByType<Canvas>().gameObject;
-		playerData = FindAnyObjectByType<PlayerData>();
+
+		playerData = playerData ?? FindFirstObjectByType<PlayerData>();
+		canvasObj = canvasObj ?? FindFirstObjectByType<Canvas>().gameObject;
 	}
 	private void Start()
 	{
-		FirtsSlot();
+		FirtSlot();
 
 	}
-	void FirtsSlot()
+	/// <summary>
+	/// Initializes the first slot grid
+	/// </summary>
+	void FirtSlot()
 	{
 		for (int i = 0; i < amountOfSlots; i++)
 		{
@@ -50,10 +57,10 @@ public class GridHolder : MonoBehaviour
 			for (int j = 0; j < amountOfSlots; j++)
 			{
 				grids[i].cells.Add(new Cell());
-				//grids[i].cells[j].num = UnityEngine.Random.Range(0, 9);
+				//grids[i].cells[j].num = UnityEngine.Random.Range(1, 10);
 				grids[i].cells[j].num = 1;
-				grids[i].cells[j].height = amountOfSlots - i * heightMultiplayer;
-				GameObject text = Instantiate(textPrefab, new Vector3(j * heightMultiplayer + 100, grids[i].cells[j].height + 900), Quaternion.identity);
+				grids[i].cells[j].height = amountOfSlots - i * heightMultiplier;
+				GameObject text = Instantiate(textPrefab, new Vector3(j * heightMultiplier + 100, grids[i].cells[j].height + 900), Quaternion.identity);
 				text.transform.SetParent(canvasObj.transform);
 				grids[i].cells[j].cellText = text.GetComponent<TMP_Text>();
 				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
@@ -62,6 +69,9 @@ public class GridHolder : MonoBehaviour
 		StartCoroutine(SpinLenght());
 		CheckForBigWin();
 	}
+	/// <summary>
+	/// Handles the main slot button press
+	/// </summary>
 	public void MasterSlotButton()
 	{
 		if (isRunning)
@@ -72,13 +82,16 @@ public class GridHolder : MonoBehaviour
 		{
 			for (int j = 0; j < amountOfSlots; j++)
 			{
-				grids[i].cells[j].num = UnityEngine.Random.Range(0, 9);
+				grids[i].cells[j].num = UnityEngine.Random.Range(1, 10);
 				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
 			}
 		}
 		StartCoroutine(SpinLenght());
 		CheckForBigWin();
 	}
+	/// <summary>
+	/// Checks for the biggest win based on the bool grids
+	/// </summary>
 
 	private void CheckForBigWin()
 	{
@@ -111,7 +124,7 @@ public class GridHolder : MonoBehaviour
 				{
 					Debug.Log("You lost");
 
-
+					ProceduralWin();
 					return;
 				}
 
@@ -130,7 +143,9 @@ public class GridHolder : MonoBehaviour
 
 		StartCoroutine(Win(biggestWin));
 	}
-
+	/// <summary>
+	/// Handles the spinning of the slot machine
+	/// </summary>
 	IEnumerator SpinLenght()
 	{
 		float t = 0;
@@ -143,7 +158,7 @@ public class GridHolder : MonoBehaviour
 			{
 				for (int j = 0; j < amountOfSlots; j++)
 				{
-					grids[i].cells[j].cellText.text = UnityEngine.Random.Range(0, 9).ToString();
+					grids[i].cells[j].cellText.text = UnityEngine.Random.Range(1, 10).ToString();
 				}
 			}
 			yield return new WaitForEndOfFrame();
@@ -157,7 +172,9 @@ public class GridHolder : MonoBehaviour
 		}
 		isRunning = false;
 	}
-
+	/// <summary>
+	/// Handles the win process
+	/// </summary>
 	private IEnumerator Win(BiggestWin bigWin)
 	{
 		yield return new WaitForSeconds(0.1f);
@@ -171,6 +188,65 @@ public class GridHolder : MonoBehaviour
 
 		playerData.AddCredits(bigWin.score);
 		//Check for the biggest win is more important not every win
+	}
+	/// <summary>
+	/// Procedurally checks for wins if no bool grid matched
+	/// </summary>
+	private void ProceduralWin()
+	{
+		//Check for Jackpot any number
+
+
+		//for (int i = 0; i < grids.Count; i++)
+		//{
+		//	for (int j = 0; j < grids[i].cells.Count; j++)
+		//	{
+		//		numToCheckAgainst = grids[i].cells[0].num;
+		//		if (grids[i].cells[j].num != numToCheckAgainst)
+		//		{
+		//			Debug.Log("No Jackpot");
+		//			break;
+		//		}
+		//	}
+		//}
+		//Collumn check
+		int collumsAmountWon = 0;
+		int numToCheckAgainst = -1;
+
+		for (int i = 0; i < grids.Count; i++)
+		{
+			if (grids[i].cells.All(c => c.num == grids[i].cells[0].num))
+			{
+				collumsAmountWon++;
+			}
+			int amountInRow = 0;
+			numToCheckAgainst = grids[0].cells[i].num;
+			for (int j = 0; j < grids[i].cells.Count; j++)
+			{
+
+				if (grids[j].cells[i].num == numToCheckAgainst)
+				{
+					amountInRow++;
+				}
+
+				if (j == grids.Count - 1 && amountInRow == grids.Count)
+				{
+					collumsAmountWon++;
+				}
+			}
+		}
+		if (collumsAmountWon >= grids.Count)
+		{
+			Debug.Log("You won a Jackpot for any number!");
+		}
+		else if (collumsAmountWon > 0)
+		{
+			Debug.Log("You won a smaller prize for " + collumsAmountWon + " collumns!");
+		}
+		else
+		{
+			Debug.Log("No win");
+		}
 	}
 }
 
