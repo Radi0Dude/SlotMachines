@@ -50,7 +50,7 @@ public class GridHolder : MonoBehaviour
 
 	}
 	/// <summary>
-	/// Initializes the first slot grid
+	/// Initializes the first slot grid and buttons and spins once to show of the win
 	/// </summary>
 	void FirtSlot()
 	{
@@ -107,11 +107,10 @@ public class GridHolder : MonoBehaviour
 		StartCoroutine(SpinLenght());
 		CheckForBigWin();
 	}
-	/// <summary>
-	/// Checks for the biggest win based on the bool grids
-	/// </summary>
-	/// 
 
+	/// <summary>
+	/// Handles the row and collumn spins
+	/// <summary>
 
 	public void RowSpin(int row)
 	{
@@ -141,7 +140,10 @@ public class GridHolder : MonoBehaviour
 		StartCoroutine(SpinRowOrCollumn(false, col));
 		CheckForBigWin();
 	}
-
+	/// <summary>
+	/// Checks for the biggest win based on the bool grids
+	/// </summary>
+	/// 
 	private void CheckForBigWin()
 	{
 		List<int> winningNums = grids.SelectMany(g => g.cells).Select(c => c.num).ToList();
@@ -197,7 +199,6 @@ public class GridHolder : MonoBehaviour
 	/// <summary>
 	/// Handles the spinning of the slot machine
 	/// </summary>
-	/// 
 
 	IEnumerator SpinLenght()
 	{
@@ -225,6 +226,9 @@ public class GridHolder : MonoBehaviour
 		}
 		isRunning = false;
 	}
+	/// <summary>
+	/// Handles the spinning of a single row or collumn
+	/// 
 	IEnumerator SpinRowOrCollumn(bool row, int num)
 	{
 		float t = 0;
