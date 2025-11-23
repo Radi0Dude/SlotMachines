@@ -16,6 +16,9 @@ public class GridHolder : MonoBehaviour
 	int amountOfSlots;
 
 	[SerializeField]
+	GameObject buttonPrefab;
+
+	[SerializeField]
 	int heightMultiplier;
 
 	[SerializeField]
@@ -54,8 +57,15 @@ public class GridHolder : MonoBehaviour
 		for (int i = 0; i < amountOfSlots; i++)
 		{
 			grids.Add(new Grid());
+			GameObject button = Instantiate(buttonPrefab, new Vector3(i * heightMultiplier + 175, 1000), Quaternion.identity);
+			button.transform.SetParent(canvasObj.transform);
+			SpinRow spinRow = button.GetComponent<SpinRow>();
+			spinRow.gridHolder = this;
+			spinRow.rowIndex = i;
+			spinRow.columnIndex = -1;
 			for (int j = 0; j < amountOfSlots; j++)
 			{
+
 				grids[i].cells.Add(new Cell());
 				//grids[i].cells[j].num = UnityEngine.Random.Range(1, 10);
 				grids[i].cells[j].num = 1;
@@ -65,7 +75,15 @@ public class GridHolder : MonoBehaviour
 				grids[i].cells[j].cellText = text.GetComponent<TMP_Text>();
 				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
 			}
+			GameObject buttonCol = Instantiate(buttonPrefab, new Vector3(1135, (amountOfSlots - i -1) * heightMultiplier + 100), Quaternion.identity);
+			buttonCol.transform.SetParent(canvasObj.transform);
+			SpinRow sr = buttonCol.GetComponent<SpinRow>();
+			sr.gridHolder = this;
+			sr.columnIndex = i;
+			sr.rowIndex = -1;
+
 		}
+		
 		StartCoroutine(SpinLenght());
 		CheckForBigWin();
 	}
@@ -92,6 +110,37 @@ public class GridHolder : MonoBehaviour
 	/// <summary>
 	/// Checks for the biggest win based on the bool grids
 	/// </summary>
+	/// 
+
+
+	public void RowSpin(int row)
+	{
+		if(isRunning)
+		{
+			return;
+		}
+		for (int i = 0; i < amountOfSlots; i++)
+		{
+			grids[i].cells[row].num = UnityEngine.Random.Range(1, 10);
+			grids[i].cells[row].cellText.text = grids[i].cells[row].num.ToString();
+		}
+		StartCoroutine(SpinRowOrCollumn(true, row));
+		CheckForBigWin();
+	}
+	public void ColSpin(int col)
+	{
+		if(isRunning)
+		{
+			return;
+		}
+		for (int i = 0; i < amountOfSlots; i++)
+		{
+			grids[col].cells[i].num = UnityEngine.Random.Range(1, 10);
+			grids[col].cells[i].cellText.text = grids[col].cells[i].num.ToString();
+		}
+		StartCoroutine(SpinRowOrCollumn(false, col));
+		CheckForBigWin();
+	}
 
 	private void CheckForBigWin()
 	{
@@ -143,9 +192,13 @@ public class GridHolder : MonoBehaviour
 
 		StartCoroutine(Win(biggestWin));
 	}
+
+
 	/// <summary>
 	/// Handles the spinning of the slot machine
 	/// </summary>
+	/// 
+
 	IEnumerator SpinLenght()
 	{
 		float t = 0;
@@ -168,6 +221,51 @@ public class GridHolder : MonoBehaviour
 			for (int j = 0; j < amountOfSlots; j++)
 			{
 				grids[i].cells[j].cellText.text = grids[i].cells[j].num.ToString();
+			}
+		}
+		isRunning = false;
+	}
+	IEnumerator SpinRowOrCollumn(bool row, int num)
+	{
+		float t = 0;
+		isRunning = true;
+
+		if (row)
+		{
+			while (t < slotTime)
+			{
+				t += Time.deltaTime;
+				for (int i = 0; i < amountOfSlots; i++)
+				{
+					for (int j = 0; j < amountOfSlots; j++)
+					{
+						grids[i].cells[num].cellText.text = UnityEngine.Random.Range(1, 10).ToString();
+					}
+				}
+				yield return new WaitForEndOfFrame();
+			}
+			for (int i = 0; i < amountOfSlots; i++)
+			{
+				grids[i].cells[num].cellText.text = grids[i].cells[num].num.ToString();
+			}
+		}
+		else
+		{
+			while (t < slotTime)
+			{
+				t += Time.deltaTime;
+				for (int i = 0; i < amountOfSlots; i++)
+				{
+					for (int j = 0; j < amountOfSlots; j++)
+					{
+						grids[num].cells[j].cellText.text = UnityEngine.Random.Range(1, 10).ToString();
+					}
+				}
+				yield return new WaitForEndOfFrame();
+			}
+			for (int i = 0; i < amountOfSlots; i++)
+			{
+				grids[num].cells[i].cellText.text = grids[num].cells[i].num.ToString();
 			}
 		}
 		isRunning = false;

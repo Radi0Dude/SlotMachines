@@ -1235,6 +1235,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GridHolder
   grids: []
   amountOfSlots: 5
+  buttonPrefab: {fileID: 1414424789490021149, guid: 374fcf00c397c2b4c927941cf59d4f06, type: 3}
   heightMultiplier: 200
   textPrefab: {fileID: 631354516}
   canvasObj: {fileID: 2055140891}
@@ -1256,7 +1257,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 10c1edbbf2c61144aa792d3093cb2cb1, type: 2}
   - {fileID: 11400000, guid: a88289c8c2ae7ce4ab2885f188aa3a2c, type: 2}
   playerData: {fileID: 626920100}
-  slotTime: 2
+  slotTime: 1
   isRunning: 1
 --- !u!4 &2108734784
 Transform:
